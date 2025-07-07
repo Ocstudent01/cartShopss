@@ -23,6 +23,8 @@ public interface IUserService {
     //convertir usuario a datos
     UserDto convertUserToDto(User user);
 
+    User getAuthenticatedUser();
+
     //obtener user por email
     //User getUserByEmail(String email);
 

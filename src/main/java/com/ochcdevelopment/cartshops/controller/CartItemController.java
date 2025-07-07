@@ -9,12 +9,14 @@ import com.ochcdevelopment.cartshops.service.cart.CartService;
 import com.ochcdevelopment.cartshops.service.cart.ICartItemService;
 import com.ochcdevelopment.cartshops.service.cart.ICartService;
 import com.ochcdevelopment.cartshops.service.user.IUserService;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 
 @RequiredArgsConstructor
@@ -34,15 +36,17 @@ public class CartItemController {
 
         try {
 
-            User user = userService.getUserById(4L);
+            User user = userService.getAuthenticatedUser();
             Cart cart = cartService.initializeNewCart(user);
-
 
             cartItemService.addItemToCart(cart.getId(),productId,quantity);
             return ResponseEntity.ok(new ApiResponse("add Item success",null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+        }catch (JwtException e){
+            return ResponseEntity.status(UNAUTHORIZED).body(new ApiResponse(e.getMessage(),null));
         }
+
     }
 
     // remover o eliminar  items de la carta atraves de dos variables
